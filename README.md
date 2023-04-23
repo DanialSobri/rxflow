@@ -1,4 +1,4 @@
-# rxflow
+# rxflow 🔥
 The ultimate automation tool for medicine collection solution.
 
 # Deploy FastAPI on Render
@@ -14,7 +14,7 @@ Use this repo as a template to deploy a Python [FastAPI](https://fastapi.tiangol
 5. Specify the following as the Start Command.
 
     ```shell
-    uvicorn main:app --host 0.0.0.0 --port 10000
+    uvicorn main:app --host 0.0.0.0 --port 3000
     ```
 
 6. Click Create Web Service.
