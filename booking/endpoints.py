@@ -1,33 +1,59 @@
 from fastapi import APIRouter, Depends, HTTPException
+from booking.Booking import Booking  
+from booking import model
+from config import settings
 
 # from ..dependencies import get_token_header
-test= 2
+
 router = APIRouter(
-    prefix="/items",
+    prefix="/booking",
     tags=["booking"],
     # dependencies=[Depends(get_token_header)],
     responses={404: {"description": "Not found"}},
 )
 
-fake_items_db = {"plumbus": {"name": "Plumbus"}, "gun": {"name": "Portal Gun"}}
+# Fake DB
+db = {}
 
-@router.get("/")
-async def read_items():
-    return fake_items_db
+# CRUD Booking
+# Read all bookings in db
+@router.get("/all")
+async def read_bookings():
+    return list(db.values())
 
-@router.get("/{item_id}")
-async def read_item(item_id: str):
-    if item_id not in fake_items_db:
-        raise HTTPException(status_code=404, detail="Item not found")
-    return {"name": fake_items_db[item_id]["name"], "item_id": item_id}
+# Read a booking by id
+@router.get("/{booking_id}",response_model=model.Booking)
+async def get_booking(booking_id:int):
+    if booking_id in db:
+        return db.get(booking_id)
+    raise HTTPException(status_code=404, detail="Item not found")
 
-@router.put(
-    "/{item_id}",
-    responses={403: {"description": "Operation forbidden"}},)
+# Create a new booking and add it to the database
+@router.post("/create/", response_model=model.Booking)
+def create_booking(delivery,hospital,patient:model.Patient):
+    booking = Booking.create_booking(db,delivery,hospital,patient)
+    db[booking.id] = booking
+    return booking
 
-async def update_item(item_id: str):
-    if item_id != "plumbus":
-        raise HTTPException(
-            status_code=403, detail="You can only update the item: plumbus"
-        )
-    return {"item_id": item_id, "name": "The great Plumbus"}
+# Create a new booking and add it to the database
+@router.post("/create/fake", response_model=model.Booking)
+def create_fake_booking():
+    booking = Booking.create_fake_booking(db)
+    db[booking.id] = booking
+    return booking
+
+# Update an item by id
+@router.put("/update/{booking_id}",response_model=model.Booking)
+async def update_booking(booking_id:int, booking:model.Booking):
+    if booking_id in db:
+        db[booking_id] = booking
+        return booking
+    raise HTTPException(status_code=404, detail="Item not found")
+
+# Delete an item by id
+@router.delete("/{booking_id}")
+async def delete_booking(booking_id:int):
+    if booking_id in db:
+        del db[booking_id]
+        return None
+    raise HTTPException(status_code=404, detail="Item not found")
