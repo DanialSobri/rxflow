@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from booking import model
-from booking.Booking import Booking  
+from booking.booking import Booking
 from config import settings
 
 # from ..dependencies import get_token_header
