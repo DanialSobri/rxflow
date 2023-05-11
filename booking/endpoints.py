@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from booking import model
 from booking.booking import Booking
+from booking.messaging import Messaging
 from config import settings
 
 # from ..dependencies import get_token_header
@@ -32,14 +33,22 @@ async def get_booking(booking_id:int):
 @router.post("/create/", response_model=model.Booking)
 def create_booking(delivery,hospital,patient:model.Patient):
     booking = Booking.create_booking(db,delivery,hospital,patient)
+    # Save to DB
     db[booking.id] = booking
+    # Send token to patient
+    telnumber,name = booking.patient.telnumber,booking.patient.name
+    Messaging.send_message_token(telnumber,name,booking.token,"05/01/2023")
     return booking
 
 # Create a new booking and add it to the database
 @router.post("/create/fake", response_model=model.Booking)
 def create_fake_booking():
     booking = Booking.create_fake_booking(db)
+    # Save to DB
     db[booking.id] = booking
+    # Send token to patient
+    telnumber,name = booking.patient.telnumber,booking.patient.name
+    Messaging.send_message_token(telnumber,name,booking.token,"05/01/2023")
     return booking
 
 # Update an item by id

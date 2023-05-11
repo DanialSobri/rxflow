@@ -42,6 +42,6 @@ class Booking:
     @classmethod
     def create_fake_booking(cls,db):
         fake = Faker()
-        patient = cls.create_patient(fake.name(),"+6012345678",fake.msisdn())
+        patient = cls.create_patient(fake.name(),"+4915788217562",fake.msisdn())
         delivery = "K" if len(db)%2==0 else "DT"
         return cls.create_booking(db,delivery,"HSAH",patient)
