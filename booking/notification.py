@@ -1,10 +1,10 @@
 import requests
 from config import settings
 
-class Messaging:
-   
+class Notification:
+    
     @classmethod
-    def send_message_token(cls,telnumber:str,name:str,bookingtoken:str,date:str):
+    def send_token(cls,telnumber:str,name:str,bookingtoken:str,date:str):
         # Set the endpoint URL and the access token
         url = "https://graph.facebook.com/v16.0/106511229099238/messages"
         token = settings.WSTOKEN
