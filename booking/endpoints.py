@@ -1,14 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from booking import model
 from booking.booking import Booking
-from booking.notification import Notification
 from config import settings
 
 # from ..dependencies import get_token_header
 
 router = APIRouter(
     prefix="/booking",
-    tags=["Booking"],
+    tags=["booking"],
     # dependencies=[Depends(get_token_header)],
     responses={404: {"description": "Not found"}},
 )
@@ -33,22 +32,14 @@ async def get_booking(booking_id:int):
 @router.post("/create/", response_model=model.Booking)
 def create_booking(delivery,hospital,patient:model.Patient):
     booking = Booking.create_booking(db,delivery,hospital,patient)
-    # Save to DB
     db[booking.id] = booking
-    # Send token to patient
-    telnumber,name = booking.patient.telnumber,booking.patient.name
-    # TODO Messaging.send_message_token(telnumber,name,booking.token,"05/01/2023")
     return booking
 
 # Create a new booking and add it to the database
 @router.post("/create/fake", response_model=model.Booking)
 def create_fake_booking():
     booking = Booking.create_fake_booking(db)
-    # Save to DB
     db[booking.id] = booking
-    # Send token to patient
-    telnumber,name = booking.patient.telnumber,booking.patient.name
-    # TODO Messaging.send_message_token(telnumber,name,booking.token,"05/01/2023")
     return booking
 
 # Update an item by id
@@ -66,19 +57,3 @@ async def delete_booking(booking_id:int):
         del db[booking_id]
         return None
     raise HTTPException(status_code=404, detail="Item not found")
-
-# Notification
-# Send notification through Whatsapp
-@router.post("/approve/{booking_id}",tags=["Notification"])
-async def send_notification(booking_id:int,approve:bool=True):
-    if booking_id not in db:
-        raise HTTPException(status_code=404, detail="Item not found")
-    # Get booking
-    booking = db.get(booking_id)
-    # Send token to patient
-    telnumber,name = booking.patient.telnumber,booking.patient.name
-
-    if approve:
-        mynotification = Notification.send_token(telnumber,name,booking.token,"05/01/2023")
-
-    return mynotification

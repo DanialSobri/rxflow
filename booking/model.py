@@ -17,9 +17,6 @@ class Patient(BaseModel):
     spnumber: str
     telnumber: str
 
-class Medicine(BaseModel):
-    items: Optional[dict]
-
 class Booking(BaseModel):
     id: int
     token: str
@@ -27,7 +24,6 @@ class Booking(BaseModel):
     status: str = "IDLE"
     hospital: str = "HSAH"
     patient: Patient
-    medicines: Medicine
 
     # class Config:
     #     schema_extra = {
@@ -45,10 +41,3 @@ class Booking(BaseModel):
 
     #         }
     #     }
-
-class Notification(BaseModel):
-    
-    message: str
-    sentat: str
-    telnumber: str
-    status: str

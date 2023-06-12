@@ -21,12 +21,6 @@ class Booking:
         return str(self.generateToken(self,6000,6999))
     
     @classmethod
-    def create_medicine(cls,items):
-        return model.Medicine(
-            items = items
-            )
-    
-    @classmethod
     def create_patient(cls,name,telnumber,spnumber):
         return model.Patient(
             name = name,
@@ -35,21 +29,19 @@ class Booking:
         )
     
     @classmethod
-    def create_booking(cls,db,delivery,hospital,patient,medicines=[]):
+    def create_booking(cls,db,delivery,hospital,patient):
         return model.Booking(
             id = len(db) + 1 ,
             token = cls.generateTokenKaunter(cls) if delivery=="K" else cls.generateTokenDrivetru(cls),
             delivery = delivery,
             status = "CREATED",
             hospital = hospital,
-            patient = patient,
-            medicines = medicines
+            patient = patient
         )
     
     @classmethod
     def create_fake_booking(cls,db):
         fake = Faker()
-        patient = cls.create_patient(fake.name(),"+4915788217562","SP"+fake.msisdn()[:6])
-        medicines = cls.create_medicine(items={"InsulinPen":"Novapen","GTN":"No","Sedut":"Yes"})
+        patient = cls.create_patient(fake.name(),"+6012345678",fake.msisdn())
         delivery = "K" if len(db)%2==0 else "DT"
-        return cls.create_booking(db,delivery,"HSAH",patient,medicines)
+        return cls.create_booking(db,delivery,"HSAH",patient)
